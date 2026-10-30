@@ -31,7 +31,7 @@ export async function proxy(request: NextRequest) {
     return r
   }
 
-  const isProtected = ['/app', '/admin', '/pending'].some((p) => path === p || path.startsWith(p + '/'))
+  const isProtected = ['/app', '/admin', '/pending', '/intake'].some((p) => path === p || path.startsWith(p + '/'))
   const isAuthPage = path === '/login' || path === '/signup'
 
   if (!user) return isProtected ? go('/login') : response
@@ -41,8 +41,9 @@ export async function proxy(request: NextRequest) {
   const role: string = data?.role ?? 'applicant'
 
   if (isAuthPage) return go(homeFor(role))
-  if (role === 'applicant' && !path.startsWith('/pending')) return go('/pending')
-  if (role !== 'applicant' && path.startsWith('/pending')) return go(homeFor(role))
+  const applicantOk = path.startsWith('/pending') || path.startsWith('/intake')
+  if (role === 'applicant' && !applicantOk) return go('/pending')
+  if (role !== 'applicant' && applicantOk) return go(homeFor(role))
   if (path.startsWith('/admin') && role !== 'owner' && role !== 'team') return go('/not-allowed')
   return response
 }

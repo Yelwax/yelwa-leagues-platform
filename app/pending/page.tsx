@@ -1,7 +1,8 @@
 import { Suspense } from 'react'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import LogoutButton from '@/components/LogoutButton'
-import { h1, wrap } from '@/lib/ui'
+import { h1, wrap, btn } from '@/lib/ui'
 
 const stages: Record<string, string> = {
   brochure_requested: 'We have your details. Your next step is the intake form.',
@@ -24,6 +25,9 @@ async function Content() {
       <p className="mt-6 border-l-4 border-gold bg-white p-4 leading-relaxed">
         <strong className="text-navy">Where you are:</strong> {stages[profile?.pipeline_stage ?? ''] ?? 'We are reviewing your application.'}
       </p>
+      {profile?.pipeline_stage === 'brochure_requested' && (
+        <div className="mt-6"><Link href="/intake" className={btn}>Fill in the intake form</Link></div>
+      )}
       <LogoutButton />
     </div>
   )

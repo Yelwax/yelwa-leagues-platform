@@ -1,7 +1,8 @@
 import { Suspense } from 'react'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import LogoutButton from '@/components/LogoutButton'
-import { h1, wrap } from '@/lib/ui'
+import { h1, wrap, btn } from '@/lib/ui'
 
 async function Content() {
   const supabase = await createClient()
@@ -10,16 +11,12 @@ async function Content() {
   return (
     <div className={wrap}>
       <h1 className={h1}>Admin</h1>
-      <p className="mt-4">Signed in as <strong>{p?.full_name}</strong> ({p?.role}). The applicant pipeline will appear here.</p>
+      <p className="mt-4">Signed in as <strong>{p?.full_name}</strong> ({p?.role}).</p>
+      <div className="mt-6"><Link href="/admin/applicants" className={btn}>Applicants</Link></div>
       <LogoutButton />
     </div>
   )
 }
-
 export default function Page() {
-  return (
-    <Suspense fallback={<div className={wrap}><p>Loading...</p></div>}>
-      <Content />
-    </Suspense>
-  )
+  return <Suspense fallback={<div className={wrap}><p>Loading...</p></div>}><Content /></Suspense>
 }
