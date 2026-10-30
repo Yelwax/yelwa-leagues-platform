@@ -12,6 +12,7 @@ export default function BrochureForm() {
     e.preventDefault()
     setError('')
     const f = new FormData(e.currentTarget)
+    const q = new URLSearchParams(window.location.search)
     setStatus('sending')
     try {
       const res = await fetch('/api/brochure', {
@@ -22,6 +23,8 @@ export default function BrochureForm() {
           email: f.get('email'),
           whatsapp: f.get('whatsapp'),
           company: f.get('company'),
+          stage: q.get('stage') ?? '',
+          challenge: q.get('challenge') ?? '',
           consent: f.get('consent') === 'on',
         }),
       })

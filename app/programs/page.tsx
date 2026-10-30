@@ -18,11 +18,11 @@ export default function Programs() {
       </div>
       <div className="mt-8 border-l-4 border-gold pl-5">
         <h2 className={h2}>Momentum</h2>
-        <p className="mt-2 leading-relaxed">Details coming soon.</p> {/* TODO: add Momentum courses */}
+        <p className="mt-2 leading-relaxed">Applied practice on your own business, with a mentor assigned to you.</p>
       </div>
       <div className="mt-8 border-l-4 border-navy pl-5">
         <h2 className={h2}>Acceleration</h2>
-        <p className="mt-2 leading-relaxed">Details coming soon.</p> {/* TODO: add Acceleration courses */}
+        <p className="mt-2 leading-relaxed">Scaling, pitching and funding access, for businesses ready for the next level.</p>
       </div>
 
       <div className="mt-10"><Link href="/brochure" className={btn}>Get the brochure</Link></div>

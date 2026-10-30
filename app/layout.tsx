@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
+import WhatsAppButton from '@/components/WhatsAppButton'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -40,6 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <p className="mt-3">© 2026 Yelwax Solutions. All rights reserved.</p>
           </div>
         </footer>
+        <WhatsAppButton />
       </body>
     </html>
   )

@@ -20,6 +20,11 @@ export async function POST(request: Request) {
   const email = String(body.email ?? '').trim().toLowerCase()
   const whatsapp = String(body.whatsapp ?? '').replace(/[\s-]/g, '')
 
+  const stages = ['idea', 'started', 'running', 'stuck', 'scale']
+  const stageRaw = String(body.stage ?? '')
+  const stage = stages.includes(stageRaw) ? stageRaw : null
+  const challenge = String(body.challenge ?? '').trim().slice(0, 300) || null
+
   if (full_name.length < 2 || full_name.length > 100) return fail('Please enter your full name.')
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return fail('Please enter a valid email address.')
   if (!/^(?:\+?234|0)[789][01]\d{8}$/.test(whatsapp)) return fail('Please enter a valid Nigerian WhatsApp number.')
@@ -28,7 +33,7 @@ export async function POST(request: Request) {
   const supabase = await createClient()
   const { error } = await supabase
     .from('leads')
-    .insert({ full_name, email, whatsapp, consent: true, source: 'brochure' })
+    .insert({ full_name, email, whatsapp, consent: true, source: 'brochure', stage, challenge })
 
   // 23505 = this email is already on the list. Treat as success so they still get the brochure.
   if (error && error.code !== '23505') {
