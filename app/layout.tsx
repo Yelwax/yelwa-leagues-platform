@@ -14,6 +14,7 @@ const nav = [
   ['Programs', '/programs'],
   ['How it works', '/how-it-works'],
   ['Contact', '/contact'],
+  ['Log in', '/login'],
 ]
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
