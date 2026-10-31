@@ -31,10 +31,10 @@ export default function AuthForm({ mode }: { mode: Mode }) {
     let err: string | null = null
     if (mode === 'login') {
       const { error } = await supabase.auth.signInWithPassword({ email, password })
-      err = error ? error.message : null
+      err = error ? (/invalid login/i.test(error.message) ? 'Wrong email or password.' : error.message) : null
     } else if (mode === 'signup') {
       const fullName = String(f.get('fullName') ?? '').trim()
-      const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { full_name: fullName } } })
+      const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { full_name: fullName }, emailRedirectTo: `${window.location.origin}/auth/callback?next=/pending` } })
       if (error) err = error.message
       else if (!data.session) { setMessage('Check your email to confirm your account, then log in.'); setBusy(false); return }
     } else if (mode === 'forgot') {
@@ -80,6 +80,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
           <p><Link href="/forgot-password" className="text-navy underline">Forgot your password?</Link></p>
           <p>New here? <Link href="/signup" className="text-navy underline">Create an account</Link></p>
         </>)}
+        {mode === 'signup' && <p>By creating an account you agree to our <Link href="/terms" className="text-navy underline">Terms</Link> and <Link href="/privacy" className="text-navy underline">Privacy Policy</Link>.</p>}
         {mode === 'signup' && <p>Already have an account? <Link href="/login" className="text-navy underline">Log in</Link></p>}
         {mode === 'forgot' && <p><Link href="/login" className="text-navy underline">Back to log in</Link></p>}
       </div>

@@ -25,7 +25,7 @@ async function Content() {
   return (
     <div className={wrap}>
       <h1 className={h1}>Member intake form</h1>
-      <p className="mt-4 leading-relaxed">This helps us understand who you are and where you are starting from. It takes about 10 minutes. Fields marked * are required.</p>
+      <p className="mt-4 leading-relaxed">This helps us understand who you are and where you are starting from. It takes about 10 minutes. Fields marked * are required. Read how we use your information in our <Link href="/privacy" className="font-semibold text-navy underline">Privacy Policy</Link>.</p>
       <IntakeForm profileId={user!.id} initial={initial} />
     </div>
   )

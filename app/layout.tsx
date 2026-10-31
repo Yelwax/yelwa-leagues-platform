@@ -39,6 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="mx-auto max-w-5xl px-5 py-8">
             <p className="font-semibold text-gold">Yelwa Leagues</p>
             <p>A Program of Yelwax Solutions</p>
+            <p className="mt-3 flex gap-5"><Link href="/privacy" className="underline">Privacy Policy</Link><Link href="/terms" className="underline">Terms of Use</Link></p>
             <p className="mt-3">© 2026 Yelwax Solutions. All rights reserved.</p>
           </div>
         </footer>

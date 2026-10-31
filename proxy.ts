@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 const homeFor = (role: string) =>
   role === 'owner' || role === 'team' ? '/admin' : role === 'applicant' ? '/pending' : '/app'
 
-export async function proxy(request: NextRequest) {
+async function handle(request: NextRequest) {
   let response = NextResponse.next({ request })
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -46,6 +46,16 @@ export async function proxy(request: NextRequest) {
   if (role !== 'applicant' && applicantOk) return go(homeFor(role))
   if (path.startsWith('/admin') && role !== 'owner' && role !== 'team') return go('/not-allowed')
   return response
+}
+
+export async function proxy(request: NextRequest) {
+  const res = await handle(request)
+  res.headers.set('X-Content-Type-Options', 'nosniff')
+  res.headers.set('X-Frame-Options', 'DENY')
+  res.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
+  res.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
+  res.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains')
+  return res
 }
 
 export const config = {

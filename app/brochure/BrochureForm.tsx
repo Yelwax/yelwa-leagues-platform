@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import Link from 'next/link'
 import { btn } from '@/lib/ui'
 
 const input = 'mt-1 w-full rounded border border-navy/30 bg-white px-3 py-2 text-base'
@@ -62,7 +63,7 @@ export default function BrochureForm() {
       </div>
       <label className="flex items-start gap-3">
         <input name="consent" type="checkbox" required className="mt-1 h-5 w-5" />
-        <span>I agree to be contacted by Yelwa Leagues about my enquiry.</span>
+        <span>I agree to be contacted by Yelwa Leagues about my enquiry, as described in the <Link href="/privacy" className="underline">Privacy Policy</Link>.</span>
       </label>
       {error && <p role="alert" className="font-semibold text-red-700">{error}</p>}
       <button type="submit" disabled={status === 'sending'} className={`${btn} disabled:opacity-60`}>
