@@ -1,9 +1,10 @@
 import { Suspense } from 'react'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import LogoutButton from '@/components/LogoutButton'
 import { h1, h2, wrap } from '@/lib/ui'
 
-const soon = ['Library', 'Calendar', 'Chat']
+const soon = ['Calendar', 'Chat']
 
 async function Content() {
   const supabase = await createClient()
@@ -31,6 +32,7 @@ async function Content() {
         )
       })}
       <div className="mt-8 flex flex-wrap gap-3">
+        <Link href="/app/library" className="rounded bg-gold px-4 py-2 font-semibold text-navy">Library</Link>
         {soon.map((s) => <span key={s} className="rounded border border-navy/30 px-4 py-2 text-navy/60">{s} (coming soon)</span>)}
       </div>
       <LogoutButton />
