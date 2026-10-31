@@ -2,9 +2,10 @@ import { Suspense } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import LogoutButton from '@/components/LogoutButton'
+import { wat } from '@/lib/events'
 import { h1, h2, wrap } from '@/lib/ui'
 
-const soon = ['Calendar', 'Chat']
+const soon = ['Chat']
 
 async function Content() {
   const supabase = await createClient()
@@ -14,6 +15,7 @@ async function Content() {
   const { data: mine } = isTutor
     ? await supabase.from('pods').select('id, name, phase, commitment_hours, track, pod_members(profiles!student_id(full_name))').eq('tutor_id', user!.id)
     : await supabase.from('pod_members').select('pods(id, name, phase, commitment_hours, track, tutor:profiles!tutor_id(full_name))').eq('student_id', user!.id)
+  const { data: next } = await supabase.from('events').select('id, title, starts_at').gte('ends_at', new Date().toISOString()).order('starts_at').limit(1)
   const pods = (mine ?? []).map((r: any) => (isTutor ? r : Array.isArray(r.pods) ? r.pods[0] : r.pods)).filter(Boolean)
   return (
     <div className={wrap}>
@@ -31,8 +33,12 @@ async function Content() {
           </div>
         )
       })}
+      {next?.[0] && (
+        <p className="mt-6 border-l-4 border-forest bg-white p-4">Next class: <Link href={`/app/calendar/${next[0].id}`} className="font-semibold text-navy underline">{next[0].title}</Link>, {wat(next[0].starts_at)}</p>
+      )}
       <div className="mt-8 flex flex-wrap gap-3">
         <Link href="/app/library" className="rounded bg-gold px-4 py-2 font-semibold text-navy">Library</Link>
+        <Link href="/app/calendar" className="rounded bg-gold px-4 py-2 font-semibold text-navy">Calendar</Link>
         {soon.map((s) => <span key={s} className="rounded border border-navy/30 px-4 py-2 text-navy/60">{s} (coming soon)</span>)}
       </div>
       <LogoutButton />
