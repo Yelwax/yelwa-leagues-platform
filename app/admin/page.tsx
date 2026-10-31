@@ -12,7 +12,11 @@ async function Content() {
     <div className={wrap}>
       <h1 className={h1}>Admin</h1>
       <p className="mt-4">Signed in as <strong>{p?.full_name}</strong> ({p?.role}).</p>
-      <div className="mt-6"><Link href="/admin/applicants" className={btn}>Applicants</Link></div>
+      <div className="mt-6 flex flex-wrap gap-3">
+        <Link href="/admin/applicants" className={btn}>Applicants</Link>
+        <Link href="/admin/pods" className={btn}>Pods</Link>
+        {p?.role === 'owner' && <Link href="/admin/people" className={btn}>People and roles</Link>}
+      </div>
       <LogoutButton />
     </div>
   )

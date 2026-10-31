@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { stages, stageLabel } from '@/lib/stages'
 import { sections, type Answers } from '@/lib/intake'
-import { moveStage, saveReview } from '@/app/admin/actions'
+import { moveStage, saveReview, activateStudent } from '@/app/admin/actions'
 import { h1, h2 } from '@/lib/ui'
 
 const box = 'mt-1 w-full rounded border border-navy/30 bg-white px-3 py-2 text-base font-normal'
@@ -34,6 +34,7 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
     supabase.from('internal_review').select('*').eq('profile_id', id).maybeSingle(),
     supabase.from('audit_log').select('action, details, created_at, actor:profiles!actor_id(full_name)').eq('target_profile_id', id).order('created_at', { ascending: false }).limit(30),
   ])
+  const { data: activePods } = await supabase.from('pods').select('id, name').eq('active', true)
   const lead = Array.isArray(p.leads) ? p.leads[0] : p.leads
   const wa = waLink(lead?.whatsapp)
   const ans = (intake?.answers ?? {}) as Answers
@@ -51,6 +52,15 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
         </label>
         <button type="submit" className="rounded bg-navy px-4 py-2 font-semibold text-cream">Move</button>
       </form>
+
+      {p.pipeline_stage === 'payment_confirmed' && (
+        <form action={activateStudent.bind(null, id)} className="mt-6 flex flex-wrap items-end gap-3 border-l-4 border-forest bg-white p-4">
+          <label className="font-semibold text-navy">Place in pod and activate
+            <select name="pod_id" required className={box}><option value="">Choose a pod...</option>{(activePods ?? []).map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}</select>
+          </label>
+          <button type="submit" className="rounded bg-forest px-4 py-2 font-semibold text-white">Activate student</button>
+        </form>
+      )}
 
       {lead && (lead.stage || lead.challenge) && (
         <div className="mt-8 border-l-4 border-gold bg-white p-4">

@@ -45,3 +45,59 @@ export async function saveReview(profileId: string, formData: FormData) {
   await supabase.from('audit_log').insert({ actor_id: user.id, action: 'review_saved', target_profile_id: profileId })
   revalidatePath(`/admin/applicants/${profileId}`)
 }
+
+export async function createPod(formData: FormData) {
+  const { supabase } = await requireTeam()
+  const name = String(formData.get('name') ?? '').trim()
+  if (!name) return
+  const tutor = String(formData.get('tutor_id') ?? '')
+  const { error } = await supabase.from('pods').insert({
+    name, phase: String(formData.get('phase')), commitment_hours: Number(formData.get('commitment_hours')),
+    track: String(formData.get('track')), tutor_id: tutor || null,
+  })
+  if (error) throw new Error(error.message)
+  revalidatePath('/admin/pods')
+}
+
+export async function updatePod(podId: string, formData: FormData) {
+  const { supabase } = await requireTeam()
+  const tutor = String(formData.get('tutor_id') ?? '')
+  const { error } = await supabase.from('pods').update({ tutor_id: tutor || null, active: formData.get('active') === 'on' }).eq('id', podId)
+  if (error) throw new Error(error.message)
+  revalidatePath(`/admin/pods/${podId}`)
+}
+
+export async function addMember(podId: string, formData: FormData) {
+  const { supabase } = await requireTeam()
+  const student = String(formData.get('student_id') ?? '')
+  if (!student) return
+  const { error } = await supabase.from('pod_members').insert({ pod_id: podId, student_id: student })
+  if (error) throw new Error(error.message)
+  revalidatePath(`/admin/pods/${podId}`)
+}
+
+export async function removeMember(podId: string, studentId: string) {
+  const { supabase } = await requireTeam()
+  await supabase.from('pod_members').delete().eq('pod_id', podId).eq('student_id', studentId)
+  revalidatePath(`/admin/pods/${podId}`)
+}
+
+export async function activateStudent(profileId: string, formData: FormData) {
+  const { supabase } = await requireTeam()
+  const pod = String(formData.get('pod_id') ?? '')
+  if (!pod) return
+  const { error } = await supabase.rpc('activate_student', { p_student: profileId, p_pod: pod })
+  if (error) throw new Error(error.message)
+  revalidatePath(`/admin/applicants/${profileId}`)
+}
+
+export async function setRole(profileId: string, formData: FormData) {
+  const { supabase, user } = await requireTeam()
+  const { data: owner } = await supabase.rpc('is_owner')
+  if (!owner || profileId === user.id) throw new Error('Not allowed')
+  const role = String(formData.get('role') ?? '')
+  if (!['team', 'tutor', 'student', 'applicant'].includes(role)) return
+  const { error } = await supabase.from('profiles').update({ role }).eq('id', profileId)
+  if (error) throw new Error(error.message)
+  revalidatePath('/admin/people')
+}
