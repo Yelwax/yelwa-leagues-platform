@@ -101,3 +101,23 @@ export async function setRole(profileId: string, formData: FormData) {
   if (error) throw new Error(error.message)
   revalidatePath('/admin/people')
 }
+
+export async function reviewReport(reportId: string) {
+  const { supabase } = await requireTeam()
+  await supabase.from('reports').update({ status: 'reviewed' }).eq('id', reportId)
+  revalidatePath('/admin/reports')
+}
+
+export async function removeReportedMessage(reportId: string, messageId: string) {
+  const { supabase } = await requireTeam()
+  await supabase.from('messages').update({ deleted_at: new Date().toISOString(), body: '' }).eq('id', messageId)
+  await supabase.from('reports').update({ status: 'reviewed' }).eq('id', reportId)
+  revalidatePath('/admin/reports')
+}
+
+export async function muteUser(profileId: string, days: number) {
+  const { supabase } = await requireTeam()
+  const until = days > 0 ? new Date(Date.now() + days * 86400000).toISOString() : null
+  await supabase.from('profiles').update({ muted_until: until }).eq('id', profileId)
+  revalidatePath('/admin/reports')
+}

@@ -5,7 +5,7 @@ import LogoutButton from '@/components/LogoutButton'
 import { wat } from '@/lib/events'
 import { h1, h2, wrap } from '@/lib/ui'
 
-const soon = ['Chat']
+const soon: string[] = []
 
 async function Content() {
   const supabase = await createClient()
@@ -39,6 +39,7 @@ async function Content() {
       <div className="mt-8 flex flex-wrap gap-3">
         <Link href="/app/library" className="rounded bg-gold px-4 py-2 font-semibold text-navy">Library</Link>
         <Link href="/app/calendar" className="rounded bg-gold px-4 py-2 font-semibold text-navy">Calendar</Link>
+        <Link href="/app/chat" className="rounded bg-gold px-4 py-2 font-semibold text-navy">Chat</Link>
         {soon.map((s) => <span key={s} className="rounded border border-navy/30 px-4 py-2 text-navy/60">{s} (coming soon)</span>)}
       </div>
       <LogoutButton />

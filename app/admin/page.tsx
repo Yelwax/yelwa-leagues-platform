@@ -17,6 +17,8 @@ async function Content() {
         <Link href="/admin/pods" className={btn}>Pods</Link>
         <Link href="/app/library" className={btn}>Library</Link>
         <Link href="/app/calendar" className={btn}>Calendar</Link>
+        <Link href="/app/chat" className={btn}>Community chat</Link>
+        <Link href="/admin/reports" className={btn}>Reports</Link>
         {p?.role === 'owner' && <Link href="/admin/people" className={btn}>People and roles</Link>}
       </div>
       <LogoutButton />
