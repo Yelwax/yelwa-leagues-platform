@@ -31,7 +31,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
     let err: string | null = null
     if (mode === 'login') {
       const { error } = await supabase.auth.signInWithPassword({ email, password })
-      err = error ? 'Wrong email or password.' : null
+      err = error ? error.message : null
     } else if (mode === 'signup') {
       const fullName = String(f.get('fullName') ?? '').trim()
       const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { full_name: fullName } } })
