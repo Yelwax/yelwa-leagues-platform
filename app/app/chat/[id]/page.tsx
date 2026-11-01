@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import ChatRoom, { type Msg } from '@/components/ChatRoom'
-import { h1, wrap } from '@/lib/ui'
+import { wrap } from '@/lib/ui'
 
 async function Content({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -21,7 +21,7 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
   return (
     <div className="mx-auto max-w-3xl px-5 py-8">
       <p><Link href="/app/chat" className="text-navy underline">All rooms</Link></p>
-      <h1 className={`${h1} mt-3`}>{room.type === 'community' ? 'Community' : pod?.name ?? room.name}</h1>
+      <h1 className="mt-3 font-[Cambria,Georgia,serif] text-3xl font-bold text-navy">{room.type === 'community' ? 'Community' : pod?.name ?? room.name}</h1>
       {muted && <p className="mt-3 font-semibold text-red-700">You are muted in this room for now. You can read, but not post.</p>}
       <ChatRoom roomId={id} userId={user!.id} initial={((msgs ?? []) as Msg[]).reverse()} canModerate={canModerate} />
     </div>

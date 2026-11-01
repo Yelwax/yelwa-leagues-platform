@@ -1,5 +1,6 @@
 'use client'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 
 export type Msg = { id: string; room_id: string; sender_id: string; sender_name: string; body: string; reply_to: string | null; created_at: string; deleted_at: string | null }
@@ -67,7 +68,7 @@ export default function ChatRoom({ roomId, userId, initial, canModerate }: { roo
   const byId = new Map(msgs.map((m) => [m.id, m]))
   return (
     <div className="mt-4">
-      <div className="max-h-[60vh] min-h-[40vh] overflow-y-auto rounded border border-navy/20 bg-white p-3">
+      <div className="h-[calc(100dvh-17rem)] min-h-[16rem] overflow-y-auto rounded-3xl bg-white/70 p-3 ring-1 ring-navy/10 md:h-[60vh]">
         {more && <button type="button" onClick={older} className="mb-3 text-sm text-navy underline">Load earlier messages</button>}
         {!msgs.length && <p className="text-sm">No messages yet. Say hello.</p>}
         {msgs.map((m) => {
@@ -75,15 +76,15 @@ export default function ChatRoom({ roomId, userId, initial, canModerate }: { roo
           const quoted = m.reply_to ? byId.get(m.reply_to) : null
           return (
             <div key={m.id} className={`mb-3 flex ${mine ? 'justify-end' : ''}`}>
-              <div className={`max-w-[85%] rounded px-3 py-2 ${mine ? 'bg-gold/30' : 'bg-cream'}`}>
-                <p className="text-xs font-semibold text-navy">{mine ? 'You' : m.sender_name || 'Member'} · {hhmm(m.created_at)}</p>
+              <div className={`max-w-[85%] rounded-2xl px-4 py-2 shadow-sm ${mine ? 'rounded-br-md bg-forest text-white' : 'rounded-bl-md bg-white'}`}>
+                <p className={`text-xs font-semibold ${mine ? 'text-gold' : 'text-navy'}`}>{mine ? 'You' : <Link href={`/app/members/${m.sender_id}`} className="underline decoration-dotted">{m.sender_name || 'Member'}</Link>} · {hhmm(m.created_at)}</p>
                 {quoted && !m.deleted_at && <p className="mt-1 border-l-2 border-navy/40 pl-2 text-xs text-navy/70">{quoted.deleted_at ? 'Deleted message' : quoted.body.slice(0, 80)}</p>}
                 {m.deleted_at ? <p className="italic text-navy/60">This message was deleted.</p> : <p className="whitespace-pre-wrap break-words">{m.body}</p>}
                 {!m.deleted_at && (
                   <p className="mt-1 flex gap-3 text-xs">
-                    <button type="button" onClick={() => setReplyTo(m)} className="text-navy underline">Reply</button>
-                    {(mine || canModerate) && <button type="button" onClick={() => remove(m)} className="text-red-700 underline">Delete</button>}
-                    {!mine && <button type="button" onClick={() => report(m)} className="text-navy/70 underline">Report</button>}
+                    <button type="button" onClick={() => setReplyTo(m)} className={mine ? 'py-1 text-cream underline' : 'py-1 text-navy underline'}>Reply</button>
+                    {(mine || canModerate) && <button type="button" onClick={() => remove(m)} className={mine ? 'py-1 text-red-200 underline' : 'py-1 text-red-700 underline'}>Delete</button>}
+                    {!mine && <button type="button" onClick={() => report(m)} className="py-1 text-navy/70 underline">Report</button>}
                   </p>
                 )}
               </div>
@@ -95,8 +96,8 @@ export default function ChatRoom({ roomId, userId, initial, canModerate }: { roo
       {replyTo && <p className="mt-2 text-sm">Replying to {replyTo.sender_name}: {replyTo.body.slice(0, 60)} <button type="button" onClick={() => setReplyTo(null)} className="text-navy underline">Cancel</button></p>}
       {error && <p role="alert" className="mt-2 font-semibold text-red-700">{error}</p>}
       <form onSubmit={send} className="mt-3 flex gap-2">
-        <input value={text} onChange={(e) => setText(e.target.value)} maxLength={2000} placeholder="Type a message" className="w-full rounded border border-navy/30 bg-white px-3 py-2 text-base" />
-        <button type="submit" className="rounded bg-navy px-5 py-2 font-semibold text-cream">Send</button>
+        <input value={text} onChange={(e) => setText(e.target.value)} maxLength={2000} placeholder="Type a message" className="w-full rounded-full border-0 bg-white px-5 py-3 text-base ring-1 ring-navy/15" />
+        <button type="submit" className="rounded-full bg-gold px-6 py-3 font-semibold text-navy transition active:scale-95">Send</button>
       </form>
     </div>
   )

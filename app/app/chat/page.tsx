@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { h1, wrap } from '@/lib/ui'
+import { card, initials, wrap } from '@/lib/ui'
 
 async function Content() {
   const supabase = await createClient()
@@ -22,15 +22,16 @@ async function Content() {
   list.sort((a, b) => (a.type === 'community' ? 1 : 0) - (b.type === 'community' ? 1 : 0))
   return (
     <div className={wrap}>
-      <h1 className={h1}>Chat</h1>
-      <ul className="mt-6 divide-y divide-navy/15 border-y border-navy/15">
+      <h1 className="font-[Cambria,Georgia,serif] text-3xl font-bold text-navy">Chat</h1>
+      <ul className="mt-6 space-y-3">
         {list.map((r) => (
-          <li key={r.id}><Link href={`/app/chat/${r.id}`} className="flex items-center justify-between py-4">
-            <span className="font-semibold text-navy">{r.title}</span>
+          <li key={r.id}><Link href={`/app/chat/${r.id}`} className={`${card} flex items-center gap-4 !p-4 transition active:scale-[0.98]`}>
+            <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full font-bold ${r.type === 'community' ? 'bg-gold text-navy' : 'bg-navy text-gold'}`}>{r.type === 'community' ? '#' : initials(r.title)}</span>
+            <span className="flex-1 font-semibold text-navy">{r.title}</span>
             {r.unread > 0 && <span className="rounded-full bg-forest px-3 py-1 text-sm font-semibold text-white">{r.unread} new</span>}
           </Link></li>
         ))}
-        {!list.length && <li className="py-4">No rooms yet.</li>}
+        {!list.length && <li className={`${card} text-navy/70`}>No rooms yet.</li>}
       </ul>
     </div>
   )

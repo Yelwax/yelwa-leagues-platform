@@ -2,7 +2,8 @@ import { Suspense } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import LogoutButton from '@/components/LogoutButton'
-import { h1, wrap, btn } from '@/lib/ui'
+import { h1, wrap, btn, card } from '@/lib/ui'
+import { stages as allStages } from '@/lib/stages'
 
 const stages: Record<string, string> = {
   brochure_requested: 'We have your details. Your next step is the intake form.',
@@ -22,9 +23,21 @@ async function Content() {
     <div className={wrap}>
       <h1 className={h1}>Your application is in progress</h1>
       <p className="mt-4 text-lg">{first ? `Hello ${first}. ` : ''}Joining takes a week or two, so that we can place you in the right pod.</p>
-      <p className="mt-6 border-l-4 border-gold bg-white p-4 leading-relaxed">
+      <p className={`${card} mt-6 leading-relaxed`}>
         <strong className="text-navy">Where you are:</strong> {stages[profile?.pipeline_stage ?? ''] ?? 'We are reviewing your application.'}
       </p>
+      <ol className="mt-6 space-y-3">
+        {allStages.filter((x) => x.id !== 'active').map((x, i) => {
+          const cur = allStages.findIndex((y) => y.id === profile?.pipeline_stage)
+          const done = i < cur, now = i === cur
+          return (
+            <li key={x.id} className="flex items-center gap-3">
+              <span className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold ${done ? 'bg-forest text-white' : now ? 'bg-gold text-navy ring-4 ring-gold/30' : 'bg-navy/10 text-navy/50'}`}>{done ? '✓' : i + 1}</span>
+              <span className={now ? 'font-bold text-navy' : done ? 'text-navy' : 'text-navy/50'}>{x.label}</span>
+            </li>
+          )
+        })}
+      </ol>
       {profile?.pipeline_stage === 'brochure_requested' && (
         <div className="mt-6"><Link href="/intake" className={btn}>Fill in the intake form</Link></div>
       )}

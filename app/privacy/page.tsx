@@ -15,6 +15,7 @@ export default function Privacy() {
           <li>When you request the brochure: your name, email address, WhatsApp number, and (if you choose to share it) your business stage and challenge.</li>
           <li>When you create an account: your name, email address and password. Passwords are stored in protected form, and we cannot read them.</li>
           <li>When you apply: your answers on the intake form, such as your age range, location, education, business experience and goals.</li>
+          <li>If you choose to fill in a member profile: your display name, photo, business name, what your business does, location and a short bio. Everything on it is optional.</li>
           <li>When you are a student: your pod, class schedule, the messages you post in chat rooms, and which learning materials you open.</li>
         </ul>
         <h2 className={h2}>Why we collect it</h2>
@@ -22,6 +23,7 @@ export default function Privacy() {
         <h2 className={h2}>Who can see it</h2>
         <ul className="list-disc space-y-1 pl-5">
           <li>Our team can see your application, your contact details and your pipeline stage. Our scoring notes about applicants are never shown to applicants.</li>
+          <li>Your member profile is shown to other signed-in Yelwa Leagues members. Your email, phone number and application answers are never shown on it.</li>
           <li>Your tutor and the other students in your pod can see your name and your messages in your pod chat. Everyone in the community room can see your name and messages there.</li>
           <li>Our team does not read pod chats. We see a message only when someone reports it, together with the few messages before it.</li>
           <li>Our service providers store and process data for us: Supabase (database and login), Vercel (website hosting) and Google (class meetings).</li>
