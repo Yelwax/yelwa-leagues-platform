@@ -12,6 +12,7 @@ export const viewport: Viewport = { width: 'device-width', initialScale: 1, view
 
 const nav = [
   ['About', '/about'],
+  ['Meet the Team', '/team'],
   ['Programs', '/programs'],
   ['How it works', '/how-it-works'],
   ['Contact', '/contact'],
@@ -41,7 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <p className="font-semibold text-gold">Yelwa Leagues</p>
             <p>A Program of Yelwax Solutions</p>
             <p className="mt-3 flex gap-5"><Link href="/privacy" className="underline">Privacy Policy</Link><Link href="/terms" className="underline">Terms of Use</Link></p>
-            <p className="mt-3">© 2026 Yelwax Solutions. All rights reserved.</p>
+            <p className="mt-3">© 2026 Yelwax Solutions Inc. All rights reserved.</p>
           </div>
         </footer>
         <div data-site-chrome><WhatsAppButton /></div>

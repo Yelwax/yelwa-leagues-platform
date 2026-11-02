@@ -42,7 +42,7 @@ export default function AppNav() {
           ))}
         </ul>
       </nav>
-      <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col bg-darkgreen p-6 text-cream md:flex">
+      <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col bg-[linear-gradient(180deg,#0D210D,#14391e)] p-6 text-cream md:flex">
         <p className="font-[Cambria,Georgia,serif] text-2xl font-bold text-gold">Yelwa Leagues</p>
         <p className="text-xs text-cream/60">A Program of Yelwax Solutions</p>
         <ul className="mt-8 space-y-1">

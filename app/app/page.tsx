@@ -50,7 +50,7 @@ async function Content() {
         </Link>
       </header>
 
-      <section className="mt-6 overflow-hidden rounded-3xl bg-[linear-gradient(135deg,#1A5C2A,#0D210D)] p-6 text-cream shadow-lg">
+      <section className="mt-6 overflow-hidden rounded-3xl bg-[radial-gradient(circle_at_92%_0%,rgba(201,168,76,0.38),transparent_55%),linear-gradient(135deg,#1A5C2A,#0D210D)] p-6 text-cream shadow-lg">
         <p className="text-sm font-semibold text-gold">{live ? 'Happening soon' : 'Your next class'}</p>
         {ev ? (
           <>
