@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { stages, stageLabel } from '@/lib/stages'
 import { sections, type Answers } from '@/lib/intake'
-import { moveStage, saveReview, activateStudent } from '@/app/admin/actions'
+import { moveStage, saveReview, activateStudent, setUnder18 } from '@/app/admin/actions'
 import { h1, h2 } from '@/lib/ui'
 
 const box = 'mt-1 w-full rounded border border-navy/30 bg-white px-3 py-2 text-base font-normal'
@@ -26,7 +26,7 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  const { data: p } = await supabase.from('profiles').select('id, full_name, email, pipeline_stage, created_at, leads(whatsapp, stage, challenge)').eq('id', id).maybeSingle()
+  const { data: p } = await supabase.from('profiles').select('id, full_name, email, pipeline_stage, created_at, under_18, leads(whatsapp, stage, challenge)').eq('id', id).maybeSingle()
   if (!p) notFound()
   await supabase.from('audit_log').insert({ actor_id: user!.id, action: 'viewed', target_profile_id: id })
   const [{ data: intake }, { data: rv }, { data: log }] = await Promise.all([
@@ -58,9 +58,15 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
           <label className="font-semibold text-navy">Place in pod and activate
             <select name="pod_id" required className={box}><option value="">Choose a pod...</option>{(activePods ?? []).map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}</select>
           </label>
+          <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="under_18" defaultChecked={p.under_18} className="h-5 w-5" />Member is under 18 (no direct messages)</label>
           <button type="submit" className="rounded bg-forest px-4 py-2 font-semibold text-white">Activate student</button>
         </form>
       )}
+
+      <form action={setUnder18.bind(null, id)} className="mt-4 flex flex-wrap items-center gap-3 text-sm">
+        <label className="flex items-center gap-2"><input type="checkbox" name="under_18" defaultChecked={p.under_18} className="h-5 w-5" />Under 18 (no direct messages)</label>
+        <button type="submit" className="rounded bg-navy px-3 py-1 font-semibold text-cream">Save</button>
+      </form>
 
       {lead && (lead.stage || lead.challenge) && (
         <div className="mt-8 border-l-4 border-gold bg-white p-4">

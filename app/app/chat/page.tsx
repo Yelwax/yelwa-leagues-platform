@@ -6,10 +6,12 @@ import { card, initials, wrap } from '@/lib/ui'
 async function Content() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  const [{ data: rooms }, { data: reads }] = await Promise.all([
+  const [{ data: rooms }, { data: reads }, { data: dms }] = await Promise.all([
     supabase.from('rooms').select('id, type, name, pods(name)'),
     supabase.from('room_reads').select('room_id, last_read_at').eq('profile_id', user!.id),
+    supabase.rpc('my_dms'),
   ])
+  const dm = new Map<string, string>(((dms ?? []) as { room_id: string; partner_name: string }[]).map((d) => [d.room_id, d.partner_name] as [string, string]))
   const last = new Map((reads ?? []).map((r) => [r.room_id, r.last_read_at]))
   const list = await Promise.all((rooms ?? []).map(async (r) => {
     let q = supabase.from('messages').select('id', { count: 'exact', head: true }).eq('room_id', r.id).neq('sender_id', user!.id).is('deleted_at', null)
@@ -17,16 +19,17 @@ async function Content() {
     if (since) q = q.gt('created_at', since)
     const { count } = await q
     const pod = Array.isArray(r.pods) ? r.pods[0] : r.pods
-    return { id: r.id, type: r.type, title: r.type === 'community' ? 'Community' : `${pod?.name ?? r.name} (pod)`, unread: count ?? 0 }
+    return { id: r.id, type: r.type, title: r.type === 'community' ? 'Community' : r.type === 'dm' ? (dm.get(r.id) ?? 'Direct message') : `${pod?.name ?? r.name} (pod)`, unread: count ?? 0 }
   }))
-  list.sort((a, b) => (a.type === 'community' ? 1 : 0) - (b.type === 'community' ? 1 : 0))
+  const rank = (t: string) => (t === 'pod' ? 0 : t === 'dm' ? 1 : 2)
+  list.sort((a, b) => rank(a.type) - rank(b.type))
   return (
     <div className={wrap}>
       <h1 className="font-[Cambria,Georgia,serif] text-3xl font-bold text-navy">Chat</h1>
       <ul className="mt-6 space-y-3">
         {list.map((r) => (
           <li key={r.id}><Link href={`/app/chat/${r.id}`} className={`${card} flex items-center gap-4 !p-4 transition active:scale-[0.98]`}>
-            <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full font-bold ${r.type === 'community' ? 'bg-gold text-navy' : 'bg-navy text-gold'}`}>{r.type === 'community' ? '#' : initials(r.title)}</span>
+            <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full font-bold ${r.type === 'community' ? 'bg-gold text-navy' : r.type === 'dm' ? 'bg-forest text-white' : 'bg-navy text-gold'}`}>{r.type === 'community' ? '#' : initials(r.title)}</span>
             <span className="flex-1 font-semibold text-navy">{r.title}</span>
             {r.unread > 0 && <span className="rounded-full bg-forest px-3 py-1 text-sm font-semibold text-white">{r.unread} new</span>}
           </Link></li>

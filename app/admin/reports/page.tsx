@@ -31,7 +31,8 @@ async function Content() {
               {community && <form action={muteUser.bind(null, c.reported_sender_id, 7)}><button type="submit" className="rounded bg-gold px-3 py-1 font-semibold text-navy">Mute sender 7 days</button></form>}
               {community && <form action={muteUser.bind(null, c.reported_sender_id, 0)}><button type="submit" className="px-3 py-1 text-navy underline">Lift mute</button></form>}
             </div>
-            {!community && <p className="mt-3 text-sm">This is a pod chat. Talk to the pod's tutor, who can delete messages in their own room.</p>}
+            {c.room_type === 'pod' && <p className="mt-3 text-sm">This is a pod chat. Talk to the pod's tutor, who can delete messages in their own room.</p>}
+            {c.room_type === 'dm' && <p className="mt-3 text-sm">This is a private conversation between two members. You see only what was reported. If it is serious, speak to the member or suspend their account.</p>}
           </div>
         )
       })}

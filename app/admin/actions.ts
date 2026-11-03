@@ -88,6 +88,7 @@ export async function activateStudent(profileId: string, formData: FormData) {
   if (!pod) return
   const { error } = await supabase.rpc('activate_student', { p_student: profileId, p_pod: pod })
   if (error) throw new Error(error.message)
+  if (formData.get('under_18') === 'on') await supabase.from('profiles').update({ under_18: true }).eq('id', profileId)
   revalidatePath(`/admin/applicants/${profileId}`)
 }
 
@@ -120,4 +121,13 @@ export async function muteUser(profileId: string, days: number) {
   const until = days > 0 ? new Date(Date.now() + days * 86400000).toISOString() : null
   await supabase.from('profiles').update({ muted_until: until }).eq('id', profileId)
   revalidatePath('/admin/reports')
+}
+
+export async function setUnder18(profileId: string, formData: FormData) {
+  const { supabase, user } = await requireTeam()
+  const flag = formData.get('under_18') === 'on'
+  const { error } = await supabase.from('profiles').update({ under_18: flag }).eq('id', profileId)
+  if (error) throw new Error(error.message)
+  await supabase.from('audit_log').insert({ actor_id: user.id, action: 'stage_changed', target_profile_id: profileId, details: { from: flag ? 'adult' : 'under 18', to: flag ? 'under 18' : 'adult' } })
+  revalidatePath(`/admin/applicants/${profileId}`)
 }

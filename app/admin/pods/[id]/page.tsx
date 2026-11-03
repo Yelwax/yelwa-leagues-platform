@@ -37,7 +37,7 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
           const pr = Array.isArray(m.profiles) ? m.profiles[0] : m.profiles
           return (
             <li key={m.student_id} className="flex items-center justify-between gap-3 py-2">
-              <span>{pr?.full_name || pr?.email}</span>
+              <Link href={`/admin/applicants/${m.student_id}`} className="text-navy underline">{pr?.full_name || pr?.email}</Link>
               <form action={removeMember.bind(null, id, m.student_id)}><button type="submit" className="text-sm text-red-700 underline">Remove</button></form>
             </li>
           )

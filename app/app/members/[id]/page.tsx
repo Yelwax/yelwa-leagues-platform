@@ -1,6 +1,7 @@
 import { Suspense } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import MessageButton from '@/components/MessageButton'
 import { card, initials, wrap } from '@/lib/ui'
 
 async function Content({ params }: { params: Promise<{ id: string }> }) {
@@ -13,7 +14,10 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
     <div className={wrap}>
       <p><Link href="/app" className="text-navy underline">Back</Link></p>
       {!mp ? (
-        <p className={`${card} mt-4 text-navy/70`}>{mine ? 'You have not set up your profile yet.' : 'This member has not set up a profile yet.'} {mine && <Link href="/app/profile" className="font-semibold text-navy underline">Set it up</Link>}</p>
+        <>
+          <p className={`${card} mt-4 text-navy/70`}>{mine ? 'You have not set up your profile yet.' : 'This member has not set up a profile yet.'} {mine && <Link href="/app/profile" className="font-semibold text-navy underline">Set it up</Link>}</p>
+          {!mine && <div className="text-center"><MessageButton otherId={id} /></div>}
+        </>
       ) : (
         <div className={`${card} mt-4 text-center`}>
           {mp.avatar_url
@@ -30,6 +34,7 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
             </div>
           )}
           {mp.bio && <p className="mt-5 text-left leading-relaxed">{mp.bio}</p>}
+          {!mine && <MessageButton otherId={id} />}
           {mine && <p className="mt-6"><Link href="/app/profile" className="font-semibold text-navy underline">Edit profile</Link></p>}
         </div>
       )}
