@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
+import { Analytics } from '@vercel/analytics/next'
 import WhatsAppButton from '@/components/WhatsAppButton'
 import './globals.css'
 
@@ -46,6 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
         </footer>
         <div data-site-chrome><WhatsAppButton /></div>
+        <Analytics />
       </body>
     </html>
   )
